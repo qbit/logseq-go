@@ -1,7 +1,11 @@
-TAG=0.6.0
+TAG=0.6.4
 
-build: extract
+build: extract version
 	go build
+
+version:
+	echo "package main" > version.go
+	echo "var Version = \"${TAG}\"" >> version.go
 
 go-check:
 	go vet

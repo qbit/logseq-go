@@ -22,12 +22,14 @@ var rootFS = "Logseq-linux-x64/resources/app/"
 
 var (
 	dump   bool
+	ver    bool
 	listen string
 )
 
 func init() {
 	flag.StringVar(&listen, "http", "127.0.0.1:8080", "Listen on")
 	flag.BoolVar(&dump, "dump", false, "Dump Logseq assets to disk (./logseq).")
+	flag.BoolVar(&ver, "v", false, "Show version.")
 	flag.Parse()
 
 	_ = protect.Unveil(path.Join(os.Getenv("HOME"), "Notes"), "rwc")
@@ -96,6 +98,10 @@ func dumpFS(dest string, entries []fs.DirEntry) {
 }
 
 func main() {
+	if ver {
+		fmt.Printf("Logseq versino: %s\n", Version)
+		os.Exit(0)
+	}
 	if dump {
 		tmpDir, err := os.MkdirTemp("", "logseq")
 		if err != nil {
@@ -132,6 +138,6 @@ func main() {
 		log.Panic(err)
 	}
 
-	log.Printf("Logseq can be reached at: http://%s", listen)
+	log.Printf("Logseq %q can be reached at: http://%s", Version, listen)
 	log.Panic(s.Serve(lis))
 }
